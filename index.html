@@ -583,6 +583,24 @@ function mbDensity(v,T,M){
 }
 function fmtSpeed(v){ return Math.round(v).toLocaleString() + " m/s"; }
 
+/* ---- FIXED reference scales -----------------------------------------
+   The Explore/Compare temperature slider runs 100-1200 K across 8 gases.
+   If the axis domain and height were recalculated from whatever T/gas is
+   currently selected, the Maxwell-Boltzmann shape is scale-invariant in
+   v/v_rms, so the curve would land in the exact same pixels every time -
+   nothing would visibly move. Fixing the domain/height once, from the
+   true extremes across all gases and the full slider range, is what
+   makes a temperature or mass change actually shift/broaden the curve
+   and change the animation pace on screen. */
+const EXPLORE_T_MIN = 100, EXPLORE_T_MAX = 1200;
+let FIXED_MAX_V = 0, FIXED_MAX_DENSITY = 0, FIXED_MAX_SPEED_FOR_PX = 0;
+Object.values(GASES).forEach(g=>{
+  FIXED_MAX_V = Math.max(FIXED_MAX_V, vrms(EXPLORE_T_MAX,g.M)*3.2);
+  FIXED_MAX_SPEED_FOR_PX = Math.max(FIXED_MAX_SPEED_FOR_PX, vrms(EXPLORE_T_MAX,g.M));
+  FIXED_MAX_DENSITY = Math.max(FIXED_MAX_DENSITY, mbDensity(vmp(EXPLORE_T_MIN,g.M),EXPLORE_T_MIN,g.M));
+});
+FIXED_MAX_DENSITY *= 1.15;
+
 function populateGasSelect(sel, def){
   Object.keys(GASES).forEach(k=>{
     const g = GASES[k];
@@ -624,8 +642,10 @@ const cCtx = cCanvas.getContext("2d");
 const N_PARTICLES = 110;
 const PARTICLE_R = 3.4;
 let particles = [];
-let pxPerMps = 0.02;
-const TARGET_RMS_PX_SPEED = 2.4; // px/frame at v_rms
+// fixed conversion: real speed (m/s) -> on-screen pixels/frame. Calibrated so the
+// fastest possible case (H2 at 1200K) moves briskly; slower/heavier gases will
+// visibly crawl by comparison, and cooling/heating visibly changes the pace.
+const PX_PER_MPS = 7 / FIXED_MAX_SPEED_FOR_PX;
 
 function currentM(){ return GASES[currentGas].M; }
 
@@ -638,10 +658,6 @@ function sampleSpeed(T,M){
     if(u <= mbDensity(v,T,M)) return v;
   }
   return vmp(T,M);
-}
-
-function rescalePxPerMps(){
-  pxPerMps = TARGET_RMS_PX_SPEED / vrms(currentT, currentM());
 }
 
 function initParticles(){
@@ -657,7 +673,6 @@ function initParticles(){
       vy: speed*Math.sin(theta)
     });
   }
-  rescalePxPerMps();
 }
 
 function speedColor(ratio){
@@ -671,8 +686,8 @@ function stepParticles(){
   const w = pCanvas.width, h = pCanvas.height;
   // move
   for(const p of particles){
-    p.x += p.vx*pxPerMps;
-    p.y += p.vy*pxPerMps;
+    p.x += p.vx*PX_PER_MPS;
+    p.y += p.vy*PX_PER_MPS;
     if(p.x < PARTICLE_R){ p.x = PARTICLE_R; p.vx *= -1; }
     if(p.x > w-PARTICLE_R){ p.x = w-PARTICLE_R; p.vx *= -1; }
     if(p.y < PARTICLE_R){ p.y = PARTICLE_R; p.vy *= -1; }
@@ -719,13 +734,9 @@ function drawParticles(){
 const PAD = {l:56,r:20,t:18,b:36};
 
 function curveDomainMax(){
-  let maxV = vrms(currentT,currentM())*3.2;
-  if(compareOn){
-    const g2 = GASES[gasSelect2.value];
-    const T2 = Number(tempSlider2.value);
-    maxV = Math.max(maxV, vrms(T2,g2.M)*3.2);
-  }
-  return maxV;
+  // fixed across every gas/temperature combination so the curve actually
+  // shifts on screen instead of the axis silently rescaling to match it
+  return FIXED_MAX_V;
 }
 
 function drawAxes(ctx,w,h,maxV,maxDensity){
@@ -746,7 +757,7 @@ function drawAxes(ctx,w,h,maxV,maxDensity){
     ctx.moveTo(x,h-PAD.b); ctx.lineTo(x,h-PAD.b+5);
     ctx.stroke();
     ctx.textAlign = "center";
-    ctx.fillText(Math.round(v), x, h-PAD.b+18);
+    ctx.fillText(Math.round(v).toLocaleString(), x, h-PAD.b+18);
   }
   ctx.textAlign = "center";
   ctx.fillText("particle speed (m/s)", (w+PAD.l-PAD.r)/2, h-4);
@@ -823,12 +834,7 @@ function renderCurve(){
   cCtx.clearRect(0,0,w,h);
   const maxV = curveDomainMax();
   const g1 = GASES[currentGas];
-  let maxDensity = mbDensity(vmp(currentT,g1.M), currentT, g1.M)*1.15;
-  if(compareOn){
-    const g2 = GASES[gasSelect2.value];
-    const T2 = Number(tempSlider2.value);
-    maxDensity = Math.max(maxDensity, mbDensity(vmp(T2,g2.M),T2,g2.M)*1.15);
-  }
+  const maxDensity = FIXED_MAX_DENSITY;
   drawHistogram(cCtx,w,h,maxV,maxDensity,g1.color);
   drawAxes(cCtx,w,h,maxV,maxDensity);
   drawSeries(cCtx,w,h,currentT,g1.M,g1.color,maxV,maxDensity,false);
@@ -892,7 +898,7 @@ tempSlider.addEventListener("input", ()=>{
   currentT = Number(tempSlider.value);
   tempValue.textContent = currentT + " K";
   updateStats();
-  rescalePxPerMps();
+  initParticles();
   renderCurveLegend();
 });
 randomizeBtn.addEventListener("click", initParticles);
@@ -923,17 +929,10 @@ labSteps.forEach(btn=>{
   });
 });
 
-function drawSimpleCurve(canvas, series){
+function drawSimpleCurve(canvas, series, maxV, maxDensity){
   const ctx = canvas.getContext("2d");
   const w = canvas.width, h = canvas.height;
   ctx.clearRect(0,0,w,h);
-  let maxV = 0, maxDensity = 0;
-  series.forEach(s=>{
-    maxV = Math.max(maxV, vrms(s.T,s.M)*3.2);
-  });
-  series.forEach(s=>{
-    maxDensity = Math.max(maxDensity, mbDensity(vmp(s.T,s.M),s.T,s.M)*1.15);
-  });
   drawAxes(ctx,w,h,maxV,maxDensity);
   series.forEach(s=>{
     drawSeries(ctx,w,h,s.T,s.M,s.color,maxV,maxDensity,!!s.dashed);
@@ -941,34 +940,49 @@ function drawSimpleCurve(canvas, series){
   });
 }
 
-// step 0: temperature
+// step 0: temperature (N2 only, 150-1000 K). Domain/height are fixed to the
+// slider's own extremes so raising T visibly shifts + flattens the curve.
 const labCanvas0 = document.getElementById("labCurveCanvas0");
 const labTempSlider = document.getElementById("labTempSlider");
 const labTempValue = document.getElementById("labTempValue");
+const LAB0_T_MIN = Number(labTempSlider.min), LAB0_T_MAX = Number(labTempSlider.max);
+const LAB0_MAX_V = vrms(LAB0_T_MAX, GASES.N2.M)*3.2;
+const LAB0_MAX_DENSITY = mbDensity(vmp(LAB0_T_MIN,GASES.N2.M),LAB0_T_MIN,GASES.N2.M)*1.15;
 function renderLab0(){
   const T = Number(labTempSlider.value);
   labTempValue.textContent = T + " K";
-  drawSimpleCurve(labCanvas0, [{T:T, M:GASES.N2.M, color:GASES.N2.color}]);
+  drawSimpleCurve(labCanvas0, [{T:T, M:GASES.N2.M, color:GASES.N2.color}], LAB0_MAX_V, LAB0_MAX_DENSITY);
 }
 labTempSlider.addEventListener("input", renderLab0);
 
-// step 1: molar mass
+// step 1: molar mass at a fixed T=500K. Domain/height fixed across every gas
+// in the dropdown (at that same T) so switching gases moves the second curve
+// relative to a stable He reference rather than an axis that resizes to match.
 const labCanvas1 = document.getElementById("labCurveCanvas1");
 const labMassTag = document.getElementById("labMassTag");
+const LAB1_T = 500;
+let LAB1_MAX_V = 0, LAB1_MAX_DENSITY = 0;
+Object.values(GASES).forEach(g=>{
+  LAB1_MAX_V = Math.max(LAB1_MAX_V, vrms(LAB1_T,g.M)*3.2);
+  LAB1_MAX_DENSITY = Math.max(LAB1_MAX_DENSITY, mbDensity(vmp(LAB1_T,g.M),LAB1_T,g.M));
+});
+LAB1_MAX_DENSITY *= 1.15;
 function renderLab1(){
   const g2 = GASES[labGasSelect.value];
   labMassTag.textContent = "M = " + (g2.M*1000).toFixed(2) + " g/mol";
   drawSimpleCurve(labCanvas1, [
-    {T:500, M:GASES.He.M, color:GASES.He.color},
-    {T:500, M:g2.M, color:g2.color, dashed:true}
-  ]);
+    {T:LAB1_T, M:GASES.He.M, color:GASES.He.color},
+    {T:LAB1_T, M:g2.M, color:g2.color, dashed:true}
+  ], LAB1_MAX_V, LAB1_MAX_DENSITY);
 }
 labGasSelect.addEventListener("change", renderLab1);
 
-// step 2: pressure trap (curve is identical before/after -> draw single O2 curve)
+// step 2: pressure trap - static single curve, nothing to keep stable against
 const labCanvas2 = document.getElementById("labCurveCanvas2");
+const LAB2_MAX_V = vrms(400,GASES.O2.M)*3.2;
+const LAB2_MAX_DENSITY = mbDensity(vmp(400,GASES.O2.M),400,GASES.O2.M)*1.15;
 function renderLab2(){
-  drawSimpleCurve(labCanvas2, [{T:400, M:GASES.O2.M, color:GASES.O2.color}]);
+  drawSimpleCurve(labCanvas2, [{T:400, M:GASES.O2.M, color:GASES.O2.color}], LAB2_MAX_V, LAB2_MAX_DENSITY);
 }
 
 function resizeLabCanvases(){
