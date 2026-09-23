@@ -276,7 +276,11 @@
   .legend i{width:10px;height:10px;border-radius:3px;display:inline-block;}
   .legend i.line{width:16px;height:0;border-radius:0;border-top:2.5px solid;background:none;}
   .legend i.line.dashed{border-top-style:dashed;}
+  .legend i.line.dotted{border-top-style:dotted;border-top-width:3px;}
   .legend b.gas-name{color:var(--text);font-weight:700;}
+  .marker-legend{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--border);margin-top:2px;padding-top:10px;}
+  .marker-legend span{align-items:flex-start;}
+  .marker-legend i.line{margin-top:7px;border-color:var(--text-dim);flex:none;}
 
   .compare-row{
     display:flex;gap:10px;align-items:center;
@@ -464,6 +468,11 @@
         <canvas id="curveCanvas" width="1100" height="360"></canvas>
       </div>
       <div class="legend" id="curveLegend"></div>
+      <div class="legend marker-legend">
+        <span><i class="line"></i><span><b class="gas-name">v<sub>mp</sub></b> most probable speed &mdash; where the curve peaks; the single speed shared by the largest fraction of molecules</span></span>
+        <span><i class="line dashed"></i><span><b class="gas-name">v<sub>avg</sub></b> average speed &mdash; the mean of every molecule's speed</span></span>
+        <span><i class="line dotted"></i><span><b class="gas-name">v<sub>rms</sub></b> root-mean-square speed &mdash; the speed tied to average kinetic energy (KE&#772; = &frac12;mv<sub>rms</sub>&sup2;); always the largest of the three</span></span>
+      </div>
     </div>
 
   </section>
@@ -583,23 +592,31 @@ function mbDensity(v,T,M){
 }
 function fmtSpeed(v){ return Math.round(v).toLocaleString() + " m/s"; }
 
-/* ---- FIXED reference scales -----------------------------------------
-   The Explore/Compare temperature slider runs 100-1200 K across 8 gases.
-   If the axis domain and height were recalculated from whatever T/gas is
-   currently selected, the Maxwell-Boltzmann shape is scale-invariant in
-   v/v_rms, so the curve would land in the exact same pixels every time -
-   nothing would visibly move. Fixing the domain/height once, from the
-   true extremes across all gases and the full slider range, is what
-   makes a temperature or mass change actually shift/broaden the curve
-   and change the animation pace on screen. */
+/* ---- Explore-mode scale, recomputed on GAS change only ----------------
+   The MB curve's shape only depends on v/v_rms, so if the axis domain were
+   recalculated from the live temperature it would cancel out and nothing
+   would visibly move. But anchoring it to the single most extreme gas in
+   the whole set (H2 at 1200K) squeezes every heavier/cooler gas into a
+   sliver on the left. The fix: size the domain/height to the CURRENTLY
+   SELECTED gas's own full temperature range, and only recompute it when
+   the gas selection changes (never when just dragging temperature) - so
+   temperature changes still visibly shift the curve, and each gas gets a
+   sensibly-scaled chart instead of one sized for hydrogen. */
 const EXPLORE_T_MIN = 100, EXPLORE_T_MAX = 1200;
-let FIXED_MAX_V = 0, FIXED_MAX_DENSITY = 0, FIXED_MAX_SPEED_FOR_PX = 0;
-Object.values(GASES).forEach(g=>{
-  FIXED_MAX_V = Math.max(FIXED_MAX_V, vrms(EXPLORE_T_MAX,g.M)*3.2);
-  FIXED_MAX_SPEED_FOR_PX = Math.max(FIXED_MAX_SPEED_FOR_PX, vrms(EXPLORE_T_MAX,g.M));
-  FIXED_MAX_DENSITY = Math.max(FIXED_MAX_DENSITY, mbDensity(vmp(EXPLORE_T_MIN,g.M),EXPLORE_T_MIN,g.M));
-});
-FIXED_MAX_DENSITY *= 1.15;
+let exploreMaxV = 0, exploreMaxDensity = 0, exploreMaxSpeedForPx = 0;
+
+function recomputeExploreScale(){
+  const g1M = GASES[currentGas].M;
+  exploreMaxV = vrms(EXPLORE_T_MAX,g1M)*3.2;
+  exploreMaxDensity = mbDensity(vmp(EXPLORE_T_MIN,g1M),EXPLORE_T_MIN,g1M);
+  exploreMaxSpeedForPx = vrms(EXPLORE_T_MAX,g1M);
+  if(compareOn){
+    const g2M = GASES[gasSelect2.value].M;
+    exploreMaxV = Math.max(exploreMaxV, vrms(EXPLORE_T_MAX,g2M)*3.2);
+    exploreMaxDensity = Math.max(exploreMaxDensity, mbDensity(vmp(EXPLORE_T_MIN,g2M),EXPLORE_T_MIN,g2M));
+  }
+  exploreMaxDensity *= 1.15;
+}
 
 function populateGasSelect(sel, def){
   Object.keys(GASES).forEach(k=>{
@@ -632,6 +649,7 @@ const randomizeBtn = document.getElementById("randomizeBtn");
 let compareOn = false;
 let currentGas = "N2";
 let currentT = 300;
+recomputeExploreScale();
 
 const pCanvas = document.getElementById("particleCanvas");
 const pCtx = pCanvas.getContext("2d");
@@ -642,10 +660,11 @@ const cCtx = cCanvas.getContext("2d");
 const N_PARTICLES = 110;
 const PARTICLE_R = 3.4;
 let particles = [];
-// fixed conversion: real speed (m/s) -> on-screen pixels/frame. Calibrated so the
-// fastest possible case (H2 at 1200K) moves briskly; slower/heavier gases will
-// visibly crawl by comparison, and cooling/heating visibly changes the pace.
-const PX_PER_MPS = 7 / FIXED_MAX_SPEED_FOR_PX;
+// real speed (m/s) -> on-screen pixels/frame, calibrated to the currently
+// selected gas's own full temperature range (see recomputeExploreScale()),
+// so hotter/lighter gases visibly move faster without the scale ballooning
+// to fit hydrogen every time.
+let pxPerMps = 7 / exploreMaxSpeedForPx;
 
 function currentM(){ return GASES[currentGas].M; }
 
@@ -686,8 +705,8 @@ function stepParticles(){
   const w = pCanvas.width, h = pCanvas.height;
   // move
   for(const p of particles){
-    p.x += p.vx*PX_PER_MPS;
-    p.y += p.vy*PX_PER_MPS;
+    p.x += p.vx*pxPerMps;
+    p.y += p.vy*pxPerMps;
     if(p.x < PARTICLE_R){ p.x = PARTICLE_R; p.vx *= -1; }
     if(p.x > w-PARTICLE_R){ p.x = w-PARTICLE_R; p.vx *= -1; }
     if(p.y < PARTICLE_R){ p.y = PARTICLE_R; p.vy *= -1; }
@@ -734,9 +753,9 @@ function drawParticles(){
 const PAD = {l:56,r:20,t:18,b:36};
 
 function curveDomainMax(){
-  // fixed across every gas/temperature combination so the curve actually
-  // shifts on screen instead of the axis silently rescaling to match it
-  return FIXED_MAX_V;
+  // fixed for the currently selected gas(es), recomputed only on gas change -
+  // see recomputeExploreScale()
+  return exploreMaxV;
 }
 
 function drawAxes(ctx,w,h,maxV,maxDensity){
@@ -834,7 +853,7 @@ function renderCurve(){
   cCtx.clearRect(0,0,w,h);
   const maxV = curveDomainMax();
   const g1 = GASES[currentGas];
-  const maxDensity = FIXED_MAX_DENSITY;
+  const maxDensity = exploreMaxDensity;
   drawHistogram(cCtx,w,h,maxV,maxDensity,g1.color);
   drawAxes(cCtx,w,h,maxV,maxDensity);
   drawSeries(cCtx,w,h,currentT,g1.M,g1.color,maxV,maxDensity,false);
@@ -891,6 +910,8 @@ function explorLoop(){
 gasSelect.addEventListener("change", ()=>{
   currentGas = gasSelect.value;
   updateStats();
+  recomputeExploreScale();
+  pxPerMps = 7 / exploreMaxSpeedForPx;
   initParticles();
   renderCurveLegend();
 });
@@ -907,9 +928,13 @@ compareBtn.addEventListener("click", ()=>{
   comparePanel.style.display = compareOn ? "block" : "none";
   compareBtn.classList.toggle("toggled", compareOn);
   compareBtn.textContent = compareOn ? "\u2212 Remove comparison" : "+ Compare a second gas";
+  recomputeExploreScale();
   renderCurveLegend();
 });
-gasSelect2.addEventListener("change", renderCurveLegend);
+gasSelect2.addEventListener("change", ()=>{
+  recomputeExploreScale();
+  renderCurveLegend();
+});
 tempSlider2.addEventListener("input", ()=>{
   tempValue2.textContent = tempSlider2.value + " K";
   renderCurveLegend();
@@ -955,25 +980,25 @@ function renderLab0(){
 }
 labTempSlider.addEventListener("input", renderLab0);
 
-// step 1: molar mass at a fixed T=500K. Domain/height fixed across every gas
-// in the dropdown (at that same T) so switching gases moves the second curve
-// relative to a stable He reference rather than an axis that resizes to match.
+// step 1: molar mass at a fixed T=500K. Domain/height are sized to whichever
+// two gases are actually being compared (He + the dropdown pick), recomputed
+// each time the dropdown changes - so both curves stay clearly visible
+// instead of the axis being sized for hydrogen even when it's not shown.
 const labCanvas1 = document.getElementById("labCurveCanvas1");
 const labMassTag = document.getElementById("labMassTag");
 const LAB1_T = 500;
-let LAB1_MAX_V = 0, LAB1_MAX_DENSITY = 0;
-Object.values(GASES).forEach(g=>{
-  LAB1_MAX_V = Math.max(LAB1_MAX_V, vrms(LAB1_T,g.M)*3.2);
-  LAB1_MAX_DENSITY = Math.max(LAB1_MAX_DENSITY, mbDensity(vmp(LAB1_T,g.M),LAB1_T,g.M));
-});
-LAB1_MAX_DENSITY *= 1.15;
 function renderLab1(){
   const g2 = GASES[labGasSelect.value];
   labMassTag.textContent = "M = " + (g2.M*1000).toFixed(2) + " g/mol";
+  const maxV = Math.max(vrms(LAB1_T,GASES.He.M), vrms(LAB1_T,g2.M))*3.2;
+  const maxDensity = Math.max(
+    mbDensity(vmp(LAB1_T,GASES.He.M),LAB1_T,GASES.He.M),
+    mbDensity(vmp(LAB1_T,g2.M),LAB1_T,g2.M)
+  )*1.15;
   drawSimpleCurve(labCanvas1, [
     {T:LAB1_T, M:GASES.He.M, color:GASES.He.color},
     {T:LAB1_T, M:g2.M, color:g2.color, dashed:true}
-  ], LAB1_MAX_V, LAB1_MAX_DENSITY);
+  ], maxV, maxDensity);
 }
 labGasSelect.addEventListener("change", renderLab1);
 
