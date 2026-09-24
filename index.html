@@ -2,92 +2,1208 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Maui Science — Interactive Labs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.5 Kinetic Molecular Theory &amp; the Maxwell-Boltzmann Distribution | Lava Lab Science</title>
 <style>
-:root{
---ink:#1b2430; --sub:#5b6675; --bg:#f6f8fb; --card:#ffffff; --line:#e2e7ee;
---accent:#1f6f78; --accent-dark:#154f56; --accent-light:#e7f3f2;
-color-scheme: light;
-}
-@media (prefers-color-scheme: dark){
-:root:not([data-theme="light"]){
---ink:#eef2f6; --sub:#a8b3c2; --bg:#11161d; --card:#1a212b; --line:#2a3444;
---accent:#4fb8bf; --accent-dark:#7fd0d6; --accent-light:#16292a;
-}
-}
-:root[data-theme="dark"]{
---ink:#eef2f6; --sub:#a8b3c2; --bg:#11161d; --card:#1a212b; --line:#2a3444;
---accent:#4fb8bf; --accent-dark:#7fd0d6; --accent-light:#16292a;
-}
-*{box-sizing:border-box;}
-body{
-margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-background:var(--bg); color:var(--ink);
-padding: env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px);
-}
-.wrap{max-width:720px; margin:0 auto; padding:40px 0 80px;}
-h1{font-size:1.6rem; color:var(--accent-dark); margin:0 0 6px;}
-p.sub{color:var(--sub); margin:0 0 28px; font-size:.95rem;}
-h2.section-heading{font-size:1.05rem; color:var(--accent-dark); margin:34px 0 12px; padding-top:14px; border-top:1px solid var(--line);}
-.lab-card{
-display:block; background:var(--card); border:1px solid var(--line); border-radius:14px;
-padding:18px 20px; margin-bottom:14px; text-decoration:none; color:inherit;
-box-shadow:0 1px 3px rgba(20,30,40,.04); transition:transform .15s ease, box-shadow .15s ease;
-}
-.lab-card:hover{transform:translateY(-1px); box-shadow:0 4px 14px rgba(20,30,40,.08);}
-.lab-card h3{margin:0 0 4px; font-size:1.1rem; color:var(--ink);}
-.lab-card p{margin:0; font-size:.88rem; color:var(--sub);}
-.tag{
-display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.3px; text-transform:uppercase;
-color:var(--accent-dark); background:var(--accent-light); padding:2px 9px; border-radius:20px; margin-bottom:8px;
-}
-footer{color:var(--sub); font-size:.78rem; margin-top:30px;}
+  :root{
+    --bg:#0a0e16;
+    --bg-panel:#10151f;
+    --bg-panel-2:#0d1119;
+    --grid-line:rgba(255,255,255,0.035);
+    --border:rgba(255,255,255,0.09);
+    --border-soft:rgba(255,255,255,0.05);
+    --text:#e7eaf1;
+    --text-dim:#8b93a5;
+    --text-dimmer:#5b6272;
+    --teal:#2dd4bf;
+    --violet:#8b5cf6;
+    --amber:#f59e0b;
+    --rose:#f43f5e;
+    --teal-glow:rgba(45,212,191,0.18);
+    --violet-glow:rgba(139,92,246,0.18);
+    --amber-glow:rgba(245,158,11,0.18);
+    --rose-glow:rgba(244,63,94,0.18);
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background-color:var(--bg);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:28px 28px;
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.5;
+    min-height:100vh;
+    padding:18px 14px 60px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  .wordmark{
+    display:inline-block;
+    font-family:var(--sans);
+    font-size:9.5px;
+    font-weight:700;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    background:linear-gradient(90deg,var(--teal),var(--violet) 55%,var(--amber));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    margin-bottom:10px;
+  }
+
+  header.hero{
+    border:1px solid var(--border);
+    background:linear-gradient(160deg,var(--bg-panel),var(--bg-panel-2));
+    border-radius:14px;
+    padding:22px 24px;
+    margin-bottom:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::before{
+    content:"";
+    position:absolute;top:-40%;right:-10%;width:340px;height:340px;
+    background:radial-gradient(circle,var(--violet-glow),transparent 65%);
+    pointer-events:none;
+  }
+  header.hero h1{
+    margin:0 0 6px;
+    font-size:clamp(1.25rem,2.6vw,1.7rem);
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  header.hero .topic-tag{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--teal);
+    border:1px solid rgba(45,212,191,0.35);
+    background:var(--teal-glow);
+    padding:2px 9px;
+    border-radius:20px;
+    margin-bottom:10px;
+  }
+  header.hero p{
+    margin:0;
+    color:var(--text-dim);
+    max-width:70ch;
+    font-size:14.5px;
+  }
+
+  nav.modes{
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  nav.modes button{
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:14px;
+    color:var(--text-dim);
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  nav.modes button:hover{color:var(--text);border-color:rgba(255,255,255,0.2);}
+  nav.modes button.active{
+    color:var(--bg);
+    background:linear-gradient(90deg,var(--teal),#5eead4);
+    border-color:transparent;
+  }
+
+  .panel{
+    border:1px solid var(--border);
+    background:var(--bg-panel);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
+  }
+  .panel h2{
+    margin:0 0 4px;
+    font-size:17px;
+    font-weight:700;
+  }
+  .panel .sub{
+    color:var(--text-dim);
+    font-size:13.5px;
+    margin:0 0 16px;
+  }
+
+  .explore-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr);
+    gap:16px;
+  }
+  @media (max-width:840px){
+    .explore-grid{grid-template-columns:minmax(0,1fr);}
+  }
+
+  .stage{
+    border:1px solid var(--border-soft);
+    background:var(--bg-panel-2);
+    border-radius:12px;
+    overflow:hidden;
+  }
+  .stage-label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dimmer);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    padding:9px 12px 0;
+  }
+  canvas{display:block;width:100%;height:auto;}
+  #particleCanvas{background:#060911;}
+  #curveCanvas{background:#060911;}
+
+  .controls{display:flex;flex-direction:column;gap:16px;}
+  .field label{
+    display:block;
+    font-size:12.5px;
+    color:var(--text-dim);
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  .field .value-tag{
+    font-family:var(--mono);
+    color:var(--teal);
+    float:right;
+  }
+  select, input[type=range]{width:100%;}
+  select{
+    background:var(--bg-panel-2);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:9px 10px;
+    font-family:var(--sans);
+    font-size:14px;
+  }
+  input[type=range]{
+    -webkit-appearance:none;
+    height:6px;
+    border-radius:4px;
+    background:linear-gradient(90deg,var(--teal),var(--violet));
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:16px;height:16px;border-radius:50%;
+    background:#fff;border:2px solid var(--teal);cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px;height:16px;border-radius:50%;
+    background:#fff;border:2px solid var(--teal);cursor:pointer;
+  }
+
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+  button.action{
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:13px;
+    color:var(--text);
+    background:var(--bg-panel-2);
+    border:1px solid var(--border);
+    padding:9px 13px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  button.action:hover{border-color:rgba(255,255,255,0.25);}
+  button.action.primary{
+    background:linear-gradient(90deg,var(--teal),#5eead4);
+    color:#04211d;
+    border-color:transparent;
+  }
+  button.action.toggled{
+    background:var(--violet-glow);
+    border-color:rgba(139,92,246,0.5);
+    color:#d9ccff;
+  }
+
+  .stat-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:4px;
+  }
+  .stat-box{
+    border:1px solid var(--border-soft);
+    background:var(--bg-panel-2);
+    border-radius:10px;
+    padding:10px 12px;
+  }
+  .stat-box .k{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dimmer);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .stat-box .v{
+    font-family:var(--mono);
+    font-size:16px;
+    font-weight:700;
+    margin-top:2px;
+  }
+  .stat-box.vmp .v{color:var(--amber);}
+  .stat-box.vavg .v{color:var(--teal);}
+  .stat-box.vrms .v{color:var(--rose);}
+  .stat-box.ke .v{color:var(--violet);}
+
+  .formula-box{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--text-dim);
+    border-left:2px solid var(--violet);
+    padding:8px 12px;
+    background:var(--bg-panel-2);
+    border-radius:0 8px 8px 0;
+    margin-top:10px;
+  }
+  .formula-box b{color:var(--text);}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--text-dim);padding:8px 12px 12px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block;}
+  .legend i.line{width:16px;height:0;border-radius:0;border-top:2.5px solid;background:none;}
+  .legend i.line.dashed{border-top-style:dashed;}
+  .legend i.line.dotted{border-top-style:dotted;border-top-width:3px;}
+  .legend b.gas-name{color:var(--text);font-weight:700;}
+  .marker-legend{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--border);margin-top:2px;padding-top:10px;}
+  .marker-legend span{align-items:flex-start;}
+  .marker-legend i.line{margin-top:7px;border-color:var(--text-dim);flex:none;}
+
+  .compare-row{
+    display:flex;gap:10px;align-items:center;
+    border:1px dashed var(--border);
+    border-radius:10px;
+    padding:10px;
+    background:var(--bg-panel-2);
+  }
+  .gas-pill{
+    font-family:var(--mono);
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:6px;
+    font-size:13px;
+  }
+
+  /* Guided Lab */
+  .lab-steps{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+  .lab-steps button{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    background:var(--bg-panel-2);
+    border:1px solid var(--border);
+    padding:6px 11px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .lab-steps button.active{
+    color:var(--bg);
+    background:var(--amber);
+    border-color:transparent;
+    font-weight:700;
+  }
+  .lab-steps button.done::after{content:" ✓";}
+
+  .check-block{
+    margin-top:16px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    background:var(--bg-panel-2);
+  }
+  .check-block .q{font-weight:600;margin-bottom:10px;font-size:14.5px;}
+  .opt{
+    display:block;width:100%;text-align:left;
+    font-family:var(--sans);font-size:13.5px;
+    color:var(--text);
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 12px;
+    margin-bottom:7px;
+    cursor:pointer;
+  }
+  .opt:hover{border-color:rgba(255,255,255,0.25);}
+  .opt.correct{border-color:var(--teal);background:var(--teal-glow);}
+  .opt.incorrect{border-color:var(--rose);background:var(--rose-glow);}
+  .opt:disabled{cursor:default;}
+  .feedback{
+    margin-top:10px;font-size:13.5px;color:var(--text-dim);
+    border-left:2px solid var(--teal);
+    padding:8px 12px;
+    display:none;
+  }
+  .feedback.show{display:block;}
+
+  /* Quiz */
+  .tier-select{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .tier-select button{
+    flex:1 1 160px;
+    font-family:var(--sans);
+    font-weight:700;
+    font-size:13.5px;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--bg-panel-2);
+    color:var(--text-dim);
+    cursor:pointer;
+  }
+  .tier-select button[data-tier="1"].active{background:var(--teal-glow);border-color:var(--teal);color:var(--teal);}
+  .tier-select button[data-tier="2"].active{background:var(--amber-glow);border-color:var(--amber);color:var(--amber);}
+  .tier-select button[data-tier="3"].active{background:var(--rose-glow);border-color:var(--rose);color:var(--rose);}
+
+  .q-progress{font-family:var(--mono);font-size:12px;color:var(--text-dimmer);margin-bottom:8px;}
+  .results{text-align:center;padding:26px 10px;}
+  .results .badge{
+    display:inline-block;font-family:var(--mono);font-weight:700;font-size:22px;
+    padding:8px 22px;border-radius:12px;margin-bottom:10px;
+  }
+  .results .badge.mastery{background:var(--teal-glow);color:var(--teal);border:1px solid var(--teal);}
+  .results .badge.proficient{background:var(--amber-glow);color:var(--amber);border:1px solid var(--amber);}
+  .results .badge.review{background:var(--rose-glow);color:var(--rose);border:1px solid var(--rose);}
+
+  footer.note{font-size:12px;color:var(--text-dimmer);margin-top:6px;text-align:center;}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>🧪 Maui Science — Interactive Labs</h1>
-<p class="sub">Virtual and hybrid lab activities for AP &amp; Pre-AP Chemistry.</p>
 
-<a class="lab-card" href="/bonding-properties/">
-<span class="tag">AP Chem · Unit 3</span>
-<h3>Can Properties Determine Bonding?</h3>
-<p>Virtual lab — classify ionic, metallic, polar covalent, and nonpolar covalent bonding using solid-sample photos and simulated instrument readings. Use after CED Topic 3.3.</p>
-</a>
+  <div class="wordmark">LAVA LAB SCIENCE</div>
 
-<!--
-To add a new lab: create a new folder at the repo root (e.g. /titration/) with its own index.html inside,
-then copy one of the <a class="lab-card"> blocks above, update the href, tag, title, and description.
--->
+  <header class="hero">
+    <div class="topic-tag">AP Chem CED &middot; Topic 3.5</div>
+    <h1>Kinetic Molecular Theory &amp; the Maxwell&ndash;Boltzmann Distribution</h1>
+    <p>Explore how particle motion produces the macroscopic behavior of gases: watch a particulate model in real time,
+    compare Maxwell&ndash;Boltzmann speed curves across gases and temperatures, then walk through guided investigations
+    and a tiered quiz.</p>
+  </header>
 
-<h2 class="section-heading">Simulations</h2>
+  <nav class="modes">
+    <button class="mode-btn active" data-mode="explore">Explore</button>
+    <button class="mode-btn" data-mode="lab">Guided Lab</button>
+    <button class="mode-btn" data-mode="quiz">Tiered Quiz</button>
+  </nav>
 
-<a class="lab-card" href="https://mauiscience.github.io/mass-spectrometer/" target="_blank" rel="noopener">
-<span class="tag">AP Chem · Unit 1 · Topic 1.2</span>
-<h3>Mass Spectrometer Simulator</h3>
-<p>Interactive simulation — run virtual samples through a mass spectrometer and interpret the resulting spectra. Opens in a new tab.</p>
-</a>
+  <!-- ============ EXPLORE MODE ============ -->
+  <section id="mode-explore" class="mode-panel">
 
-<a class="lab-card" href="https://mauiscience.github.io/pes-spectrometer/" target="_blank" rel="noopener">
-<span class="tag">AP Chem · Unit 1 · Topic 1.6</span>
-<h3>PES Spectrometer Simulator</h3>
-<p>Interactive simulation — select elements, view simulated photoelectron spectra, and interpret binding energies to determine electron configuration. Opens in a new tab.</p>
-</a>
+    <div class="panel">
+      <h2>Particulate Model</h2>
+      <p class="sub">A 2D visualization of molecules in constant, random motion with elastic collisions &mdash; the
+      first postulate of KMT. Color encodes each particle's speed relative to the gas's own v<sub>rms</sub>.</p>
 
-<a class="lab-card" href="https://mauiscience.github.io/kinetic-molecular-theory/" target="_blank" rel="noopener">
-<span class="tag">AP Chem · Unit 3 · Topic 3.5</span>
-<h3>Kinetic Molecular Theory Simulator</h3>
-<p>Interactive simulation — explore particle motion and the Maxwell-Boltzmann speed distribution, compare gases and temperatures, then work through guided investigations and a tiered quiz. Opens in a new tab.</p>
-</a>
+      <div class="explore-grid">
+        <div class="stage">
+          <div class="stage-label">Particle box</div>
+          <canvas id="particleCanvas" width="620" height="360"></canvas>
+          <div class="legend">
+            <span><i style="background:#3b82f6"></i>slow (&lt;0.6&times;v<sub>rms</sub>)</span>
+            <span><i style="background:var(--teal)"></i>typical</span>
+            <span><i style="background:var(--amber)"></i>fast</span>
+            <span><i style="background:var(--rose)"></i>very fast (&gt;1.6&times;v<sub>rms</sub>)</span>
+          </div>
+        </div>
 
-<!--
-To add another simulation: copy one of the <a class="lab-card"> blocks in the Simulations section above,
-update the href to that simulation's own GitHub Pages address, and update the tag, title, and description.
-Keep target="_blank" rel="noopener" since these link out to separate sites.
--->
+        <div class="controls">
+          <div class="field">
+            <label>Gas <span class="value-tag" id="gasMassTag"></span></label>
+            <select id="gasSelect"></select>
+          </div>
+          <div class="field">
+            <label>Temperature <span class="value-tag" id="tempValue">300 K</span></label>
+            <input type="range" id="tempSlider" min="100" max="1200" step="10" value="300">
+          </div>
+          <div class="btn-row">
+            <button class="action primary" id="randomizeBtn">Re-randomize particles</button>
+            <button class="action" id="compareBtn">+ Compare a second gas</button>
+          </div>
 
-<footer>Lava Lab Science</footer>
+          <div class="stat-grid">
+            <div class="stat-box vmp"><div class="k">v most probable</div><div class="v" id="stat-vmp">&mdash;</div></div>
+            <div class="stat-box vavg"><div class="k">v average</div><div class="v" id="stat-vavg">&mdash;</div></div>
+            <div class="stat-box vrms"><div class="k">v rms</div><div class="v" id="stat-vrms">&mdash;</div></div>
+            <div class="stat-box ke"><div class="k">avg. KE / molecule</div><div class="v" id="stat-ke">&mdash;</div></div>
+          </div>
+
+          <div class="formula-box">
+            <b>KE = &frac12;mv&sup2;</b> &nbsp; and &nbsp; <b>KE&#772; = &frac32;k<sub>B</sub>T</b><br>
+            Kelvin temperature is directly proportional to average kinetic energy &mdash; it depends on <b>T only</b>,
+            never on pressure, volume, or which gas it is.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="comparePanel" style="display:none;">
+      <h2>Compare a second gas</h2>
+      <p class="sub">Overlay a second Maxwell&ndash;Boltzmann curve to compare temperature and molar-mass effects directly.</p>
+      <div class="compare-row">
+        <select id="gasSelect2"></select>
+        <label style="font-size:13px;color:var(--text-dim);">at</label>
+        <input type="range" id="tempSlider2" min="100" max="1200" step="10" value="600" style="max-width:220px;">
+        <span class="value-tag" id="tempValue2">600 K</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Maxwell&ndash;Boltzmann Speed Distribution</h2>
+      <p class="sub">The smooth curve is the theoretical distribution; the translucent bars are the live histogram of
+      particle speeds in the box above &mdash; a real (not decorative) 2D gas will cluster around the curve without
+      matching it exactly, since true motion is three-dimensional.</p>
+      <div class="stage">
+        <canvas id="curveCanvas" width="1100" height="360"></canvas>
+      </div>
+      <div class="legend" id="curveLegend"></div>
+      <div class="legend marker-legend">
+        <span><i class="line"></i><span><b class="gas-name">v<sub>mp</sub></b> most probable speed &mdash; where the curve peaks; the single speed shared by the largest fraction of molecules</span></span>
+        <span><i class="line dashed"></i><span><b class="gas-name">v<sub>avg</sub></b> average speed &mdash; the mean of every molecule's speed</span></span>
+        <span><i class="line dotted"></i><span><b class="gas-name">v<sub>rms</sub></b> root-mean-square speed &mdash; the speed tied to average kinetic energy (KE&#772; = &frac12;mv<sub>rms</sub>&sup2;); always the largest of the three</span></span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ GUIDED LAB MODE ============ -->
+  <section id="mode-lab" class="mode-panel" style="display:none;">
+    <div class="panel">
+      <h2>Guided Lab</h2>
+      <p class="sub">Three short investigations. Adjust the control, observe the curve, then answer the check.</p>
+      <div class="lab-steps">
+        <button class="lab-step-btn active" data-step="0">1 &middot; Temperature</button>
+        <button class="lab-step-btn" data-step="1">2 &middot; Molar Mass</button>
+        <button class="lab-step-btn" data-step="2">3 &middot; The Pressure Trap</button>
+      </div>
+
+      <div id="lab-step-0" class="lab-step">
+        <p>Fixed gas: <b style="color:var(--teal)">N&#8322; (nitrogen)</b>. Drag the slider through 300&nbsp;K,
+        600&nbsp;K, and 900&nbsp;K and watch the curve.</p>
+        <div class="field">
+          <label>Temperature <span class="value-tag" id="labTempValue">300 K</span></label>
+          <input type="range" id="labTempSlider" min="150" max="1000" step="10" value="300">
+        </div>
+        <div class="stage"><canvas id="labCurveCanvas0" width="1000" height="300"></canvas></div>
+        <div class="check-block" data-check="0">
+          <div class="q">As temperature increases, what stays exactly the same about the curve?</div>
+          <button class="opt" data-correct="false">Its peak height</button>
+          <button class="opt" data-correct="false">Its most probable speed</button>
+          <button class="opt" data-correct="true">The total area under the curve (it always equals 1)</button>
+          <button class="opt" data-correct="false">The spread (width) of the curve</button>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <div id="lab-step-1" class="lab-step" style="display:none;">
+        <p>Fixed temperature: <b>500 K</b>. Compare a light gas to a heavy gas.</p>
+        <div class="field">
+          <label>Second gas for comparison <span class="value-tag" id="labMassTag"></span></label>
+          <select id="labGasSelect"></select>
+        </div>
+        <div class="stage"><canvas id="labCurveCanvas1" width="1000" height="300"></canvas></div>
+        <div class="check-block" data-check="1">
+          <div class="q">He and SF&#8326; are both at 500 K. Compared to SF&#8326;, He molecules have&hellip;</div>
+          <button class="opt" data-correct="false">A lower average kinetic energy, since He is a lighter gas</button>
+          <button class="opt" data-correct="true">The same average kinetic energy, but a much higher average speed</button>
+          <button class="opt" data-correct="false">A higher average kinetic energy and a higher average speed</button>
+          <button class="opt" data-correct="false">The same average speed, but a lower average kinetic energy</button>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <div id="lab-step-2" class="lab-step" style="display:none;">
+        <p>A sample of O&#8322; at 400 K is sealed in a rigid piston. A student pushes the piston in, compressing the
+        gas into half its original volume, <b>while a thermostat holds the temperature at exactly 400 K</b>.</p>
+        <div class="stage"><canvas id="labCurveCanvas2" width="1000" height="300"></canvas></div>
+        <div class="check-block" data-check="2">
+          <div class="q">What happens to the O&#8322; Maxwell&ndash;Boltzmann curve during the compression?</div>
+          <button class="opt" data-correct="false">It shifts right &mdash; squeezing the gas speeds the molecules up</button>
+          <button class="opt" data-correct="false">It grows taller and narrower &mdash; more crowding means less spread in speed</button>
+          <button class="opt" data-correct="true">Nothing changes &mdash; the curve depends only on temperature and molar mass, not on pressure or volume</button>
+          <button class="opt" data-correct="false">It grows shorter and wider &mdash; collisions with the piston disorder the motion</button>
+          <div class="feedback"></div>
+        </div>
+        <div class="formula-box">
+          Common AP trap: pressure changes because molecules hit the walls <b>more often</b> in a smaller volume
+          (frequency of collision), not because they are moving faster. Speed distribution is set by T (and identity
+          of the gas) alone.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ MODE ============ -->
+  <section id="mode-quiz" class="mode-panel" style="display:none;">
+    <div class="panel">
+      <h2>Tiered Quiz</h2>
+      <p class="sub">Choose a tier. Each question gives feedback immediately; your tier score is shown at the end.</p>
+      <div class="tier-select">
+        <button data-tier="1" class="active">Tier 1 &middot; Foundational</button>
+        <button data-tier="2">Tier 2 &middot; Application</button>
+        <button data-tier="3">Tier 3 &middot; Mastery</button>
+      </div>
+      <div id="quizArea"></div>
+    </div>
+  </section>
+
+  <footer class="note">Lava Lab Science &middot; AP Chemistry CED Topic 3.5 &middot; runs fully offline, no data collected</footer>
 </div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- physical constants & gas data ---------------- */
+const R = 8.314;                 // J/(mol K)
+const NA = 6.02214076e23;
+const KB = 1.380649e-23;         // J/K
+
+const GASES = {
+  H2:  {symbol:"H\u2082",  name:"Hydrogen",         M:0.002016, color:"#2dd4bf"},
+  He:  {symbol:"He",       name:"Helium",           M:0.004003, color:"#8b5cf6"},
+  Ne:  {symbol:"Ne",       name:"Neon",             M:0.020180, color:"#f59e0b"},
+  N2:  {symbol:"N\u2082",  name:"Nitrogen",         M:0.028014, color:"#38bdf8"},
+  O2:  {symbol:"O\u2082",  name:"Oxygen",           M:0.031998, color:"#f43f5e"},
+  Ar:  {symbol:"Ar",       name:"Argon",            M:0.039948, color:"#a3e635"},
+  CO2: {symbol:"CO\u2082", name:"Carbon Dioxide",   M:0.044010, color:"#fb923c"},
+  SF6: {symbol:"SF\u2086", name:"Sulfur Hexafluoride", M:0.146055, color:"#c084fc"}
+};
+
+function vmp(T,M){ return Math.sqrt(2*R*T/M); }
+function vavg(T,M){ return Math.sqrt(8*R*T/(Math.PI*M)); }
+function vrms(T,M){ return Math.sqrt(3*R*T/M); }
+function mbDensity(v,T,M){
+  const m = M/NA, kT = KB*T;
+  if(v<=0) return 0;
+  const coeff = 4*Math.PI*Math.pow(m/(2*Math.PI*kT),1.5);
+  return coeff*v*v*Math.exp(-m*v*v/(2*kT));
+}
+function fmtSpeed(v){ return Math.round(v).toLocaleString() + " m/s"; }
+
+/* ---- Explore-mode scale, recomputed on GAS change only ----------------
+   The MB curve's shape only depends on v/v_rms, so if the axis domain were
+   recalculated from the live temperature it would cancel out and nothing
+   would visibly move. But anchoring it to the single most extreme gas in
+   the whole set (H2 at 1200K) squeezes every heavier/cooler gas into a
+   sliver on the left. The fix: size the domain/height to the CURRENTLY
+   SELECTED gas's own full temperature range, and only recompute it when
+   the gas selection changes (never when just dragging temperature) - so
+   temperature changes still visibly shift the curve, and each gas gets a
+   sensibly-scaled chart instead of one sized for hydrogen. */
+const EXPLORE_T_MIN = 100, EXPLORE_T_MAX = 1200;
+let exploreMaxV = 0, exploreMaxDensity = 0, exploreMaxSpeedForPx = 0;
+
+function recomputeExploreScale(){
+  const g1M = GASES[currentGas].M;
+  exploreMaxV = vrms(EXPLORE_T_MAX,g1M)*3.2;
+  exploreMaxDensity = mbDensity(vmp(EXPLORE_T_MIN,g1M),EXPLORE_T_MIN,g1M);
+  exploreMaxSpeedForPx = vrms(EXPLORE_T_MAX,g1M);
+  if(compareOn){
+    const g2M = GASES[gasSelect2.value].M;
+    exploreMaxV = Math.max(exploreMaxV, vrms(EXPLORE_T_MAX,g2M)*3.2);
+    exploreMaxDensity = Math.max(exploreMaxDensity, mbDensity(vmp(EXPLORE_T_MIN,g2M),EXPLORE_T_MIN,g2M));
+  }
+  exploreMaxDensity *= 1.15;
+}
+
+function populateGasSelect(sel, def){
+  Object.keys(GASES).forEach(k=>{
+    const g = GASES[k];
+    const opt = document.createElement("option");
+    opt.value = k;
+    opt.textContent = g.name + " (" + g.symbol.replace(/\u2082/g,"2").replace(/\u2086/g,"6") + ")";
+    if(k===def) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+/* ================= EXPLORE MODE ================= */
+const gasSelect = document.getElementById("gasSelect");
+const gasSelect2 = document.getElementById("gasSelect2");
+const labGasSelect = document.getElementById("labGasSelect");
+populateGasSelect(gasSelect,"N2");
+populateGasSelect(gasSelect2,"He");
+populateGasSelect(labGasSelect,"SF6");
+
+const tempSlider = document.getElementById("tempSlider");
+const tempValue = document.getElementById("tempValue");
+const tempSlider2 = document.getElementById("tempSlider2");
+const tempValue2 = document.getElementById("tempValue2");
+const gasMassTag = document.getElementById("gasMassTag");
+const compareBtn = document.getElementById("compareBtn");
+const comparePanel = document.getElementById("comparePanel");
+const randomizeBtn = document.getElementById("randomizeBtn");
+
+let compareOn = false;
+let currentGas = "N2";
+let currentT = 300;
+recomputeExploreScale();
+
+const pCanvas = document.getElementById("particleCanvas");
+const pCtx = pCanvas.getContext("2d");
+const cCanvas = document.getElementById("curveCanvas");
+const cCtx = cCanvas.getContext("2d");
+
+/* ---- particle simulation ---- */
+const N_PARTICLES = 110;
+const PARTICLE_R = 3.4;
+let particles = [];
+// real speed (m/s) -> on-screen pixels/frame, calibrated to the currently
+// selected gas's own full temperature range (see recomputeExploreScale()),
+// so hotter/lighter gases visibly move faster without the scale ballooning
+// to fit hydrogen every time.
+let pxPerMps = 7 / exploreMaxSpeedForPx;
+
+function currentM(){ return GASES[currentGas].M; }
+
+function sampleSpeed(T,M){
+  const vMaxRange = 3.6*vrms(T,M);
+  const fMax = mbDensity(vmp(T,M),T,M)*1.08;
+  for(let i=0;i<400;i++){
+    const v = Math.random()*vMaxRange;
+    const u = Math.random()*fMax;
+    if(u <= mbDensity(v,T,M)) return v;
+  }
+  return vmp(T,M);
+}
+
+function initParticles(){
+  particles = [];
+  const w = pCanvas.width, h = pCanvas.height;
+  for(let i=0;i<N_PARTICLES;i++){
+    const speed = sampleSpeed(currentT, currentM());
+    const theta = Math.random()*2*Math.PI;
+    particles.push({
+      x: PARTICLE_R + Math.random()*(w-2*PARTICLE_R),
+      y: PARTICLE_R + Math.random()*(h-2*PARTICLE_R),
+      vx: speed*Math.cos(theta),
+      vy: speed*Math.sin(theta)
+    });
+  }
+}
+
+function speedColor(ratio){
+  if(ratio < 0.6) return "#3b82f6";
+  if(ratio < 1.15) return "#2dd4bf";
+  if(ratio < 1.6) return "#f59e0b";
+  return "#f43f5e";
+}
+
+function stepParticles(){
+  const w = pCanvas.width, h = pCanvas.height;
+  // move
+  for(const p of particles){
+    p.x += p.vx*pxPerMps;
+    p.y += p.vy*pxPerMps;
+    if(p.x < PARTICLE_R){ p.x = PARTICLE_R; p.vx *= -1; }
+    if(p.x > w-PARTICLE_R){ p.x = w-PARTICLE_R; p.vx *= -1; }
+    if(p.y < PARTICLE_R){ p.y = PARTICLE_R; p.vy *= -1; }
+    if(p.y > h-PARTICLE_R){ p.y = h-PARTICLE_R; p.vy *= -1; }
+  }
+  // pairwise elastic collisions (equal mass hard disks) - O(n^2), n~110 is fine
+  const minDist = PARTICLE_R*2;
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const a = particles[i], b = particles[j];
+      const dx = b.x-a.x, dy = b.y-a.y;
+      const dist2 = dx*dx+dy*dy;
+      if(dist2 < minDist*minDist && dist2 > 0.0001){
+        const dist = Math.sqrt(dist2);
+        const nx = dx/dist, ny = dy/dist;
+        // separate overlap
+        const overlap = (minDist-dist)/2;
+        a.x -= nx*overlap; a.y -= ny*overlap;
+        b.x += nx*overlap; b.y += ny*overlap;
+        // exchange velocity components along normal (equal mass elastic collision)
+        const avn = a.vx*nx + a.vy*ny;
+        const bvn = b.vx*nx + b.vy*ny;
+        const diff = bvn - avn;
+        a.vx += diff*nx; a.vy += diff*ny;
+        b.vx -= diff*nx; b.vy -= diff*ny;
+      }
+    }
+  }
+}
+
+function drawParticles(){
+  pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+  const vr = vrms(currentT, currentM());
+  for(const p of particles){
+    const speed = Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+    pCtx.beginPath();
+    pCtx.arc(p.x,p.y,PARTICLE_R,0,2*Math.PI);
+    pCtx.fillStyle = speedColor(speed/vr);
+    pCtx.fill();
+  }
+}
+
+/* ---- MB curve drawing ---- */
+const PAD = {l:56,r:20,t:18,b:36};
+
+function curveDomainMax(){
+  // fixed for the currently selected gas(es), recomputed only on gas change -
+  // see recomputeExploreScale()
+  return exploreMaxV;
+}
+
+function drawAxes(ctx,w,h,maxV,maxDensity){
+  ctx.strokeStyle = "rgba(255,255,255,0.15)";
+  ctx.fillStyle = "#8b93a5";
+  ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PAD.l,h-PAD.b); ctx.lineTo(w-PAD.r,h-PAD.b); // x axis
+  ctx.moveTo(PAD.l,h-PAD.b); ctx.lineTo(PAD.l,PAD.t);      // y axis
+  ctx.stroke();
+  // x ticks
+  const nTicks = 6;
+  for(let i=0;i<=nTicks;i++){
+    const v = (maxV/nTicks)*i;
+    const x = PAD.l + (w-PAD.l-PAD.r)*(v/maxV);
+    ctx.beginPath();
+    ctx.moveTo(x,h-PAD.b); ctx.lineTo(x,h-PAD.b+5);
+    ctx.stroke();
+    ctx.textAlign = "center";
+    ctx.fillText(Math.round(v).toLocaleString(), x, h-PAD.b+18);
+  }
+  ctx.textAlign = "center";
+  ctx.fillText("particle speed (m/s)", (w+PAD.l-PAD.r)/2, h-4);
+  ctx.save();
+  ctx.translate(14,(h+PAD.t)/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText("fraction of molecules", 0,0);
+  ctx.restore();
+}
+
+function drawSeries(ctx,w,h,T,M,color,maxV,maxDensity,dashed){
+  ctx.beginPath();
+  const steps = 220;
+  for(let i=0;i<=steps;i++){
+    const v = maxV*i/steps;
+    const f = mbDensity(v,T,M);
+    const x = PAD.l + (w-PAD.l-PAD.r)*(v/maxV);
+    const y = (h-PAD.b) - (h-PAD.t-PAD.b)*(f/maxDensity);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.4;
+  if(dashed) ctx.setLineDash([6,4]); else ctx.setLineDash([]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // fill under curve, faint
+  ctx.lineTo(PAD.l+(w-PAD.l-PAD.r), h-PAD.b);
+  ctx.lineTo(PAD.l, h-PAD.b);
+  ctx.closePath();
+  ctx.fillStyle = color+"18";
+  ctx.fill();
+}
+
+function drawHistogram(ctx,w,h,maxV,maxDensity,color){
+  const bins = 26;
+  const counts = new Array(bins).fill(0);
+  const binW = maxV/bins;
+  for(const p of particles){
+    const s = Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+    let idx = Math.floor(s/binW);
+    if(idx>=0 && idx<bins) counts[idx]++;
+  }
+  const N = particles.length;
+  for(let i=0;i<bins;i++){
+    const density = counts[i]/(N*binW);
+    const x0 = PAD.l + (w-PAD.l-PAD.r)*(i*binW/maxV);
+    const x1 = PAD.l + (w-PAD.l-PAD.r)*((i+1)*binW/maxV);
+    const y = (h-PAD.b) - (h-PAD.t-PAD.b)*(density/maxDensity);
+    ctx.fillStyle = color+"33";
+    ctx.fillRect(x0, y, Math.max(1,x1-x0-1), (h-PAD.b)-y);
+  }
+}
+
+function drawMarkers(ctx,w,h,T,M,maxV,color,label){
+  const marks = [
+    {v:vmp(T,M), d:[]},
+    {v:vavg(T,M), d:[4,3]},
+    {v:vrms(T,M), d:[2,2]}
+  ];
+  marks.forEach(m=>{
+    const x = PAD.l + (w-PAD.l-PAD.r)*(m.v/maxV);
+    ctx.beginPath();
+    ctx.moveTo(x,h-PAD.b); ctx.lineTo(x,PAD.t+6);
+    ctx.strokeStyle = color+"90";
+    ctx.setLineDash(m.d);
+    ctx.lineWidth = 1.3;
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+}
+
+function renderCurve(){
+  const w = cCanvas.width, h = cCanvas.height;
+  cCtx.clearRect(0,0,w,h);
+  const maxV = curveDomainMax();
+  const g1 = GASES[currentGas];
+  const maxDensity = exploreMaxDensity;
+  drawHistogram(cCtx,w,h,maxV,maxDensity,g1.color);
+  drawAxes(cCtx,w,h,maxV,maxDensity);
+  drawSeries(cCtx,w,h,currentT,g1.M,g1.color,maxV,maxDensity,false);
+  drawMarkers(cCtx,w,h,currentT,g1.M,maxV,g1.color);
+  if(compareOn){
+    const g2 = GASES[gasSelect2.value];
+    const T2 = Number(tempSlider2.value);
+    drawSeries(cCtx,w,h,T2,g2.M,g2.color,maxV,maxDensity,true);
+    drawMarkers(cCtx,w,h,T2,g2.M,maxV,g2.color);
+  }
+}
+
+const curveLegend = document.getElementById("curveLegend");
+function renderCurveLegend(){
+  const g1 = GASES[currentGas];
+  let html = '<span><i class="line" style="border-color:'+g1.color+'"></i>'+
+    '<b class="gas-name">'+g1.symbol+'</b> ('+g1.name+') at '+currentT+' K &mdash; solid line</span>';
+  if(compareOn){
+    const g2 = GASES[gasSelect2.value];
+    const T2 = Number(tempSlider2.value);
+    html += '<span><i class="line dashed" style="border-color:'+g2.color+'"></i>'+
+      '<b class="gas-name">'+g2.symbol+'</b> ('+g2.name+') at '+T2+' K &mdash; dashed line</span>';
+  }
+  curveLegend.innerHTML = html;
+}
+
+function updateStats(){
+  const M = currentM();
+  document.getElementById("stat-vmp").textContent = fmtSpeed(vmp(currentT,M));
+  document.getElementById("stat-vavg").textContent = fmtSpeed(vavg(currentT,M));
+  document.getElementById("stat-vrms").textContent = fmtSpeed(vrms(currentT,M));
+  const keJ = 1.5*KB*currentT;
+  document.getElementById("stat-ke").textContent = (keJ*1e21).toFixed(2) + " \u00d710\u207b\u00b2\u00b9 J";
+  gasMassTag.textContent = "M = " + (M*1000).toFixed(2) + " g/mol";
+}
+
+function resizeCanvases(){
+  const pw = pCanvas.clientWidth || pCanvas.parentElement.clientWidth;
+  pCanvas.width = Math.max(320, Math.round(pw));
+  pCanvas.height = Math.round(pCanvas.width*0.58);
+  const cw = cCanvas.clientWidth || cCanvas.parentElement.clientWidth;
+  cCanvas.width = Math.max(320, Math.round(cw));
+  cCanvas.height = Math.round(cCanvas.width*0.33);
+  initParticles();
+}
+
+function explorLoop(){
+  stepParticles();
+  drawParticles();
+  renderCurve();
+  requestAnimationFrame(explorLoop);
+}
+
+gasSelect.addEventListener("change", ()=>{
+  currentGas = gasSelect.value;
+  updateStats();
+  recomputeExploreScale();
+  pxPerMps = 7 / exploreMaxSpeedForPx;
+  initParticles();
+  renderCurveLegend();
+});
+tempSlider.addEventListener("input", ()=>{
+  currentT = Number(tempSlider.value);
+  tempValue.textContent = currentT + " K";
+  updateStats();
+  initParticles();
+  renderCurveLegend();
+});
+randomizeBtn.addEventListener("click", initParticles);
+compareBtn.addEventListener("click", ()=>{
+  compareOn = !compareOn;
+  comparePanel.style.display = compareOn ? "block" : "none";
+  compareBtn.classList.toggle("toggled", compareOn);
+  compareBtn.textContent = compareOn ? "\u2212 Remove comparison" : "+ Compare a second gas";
+  recomputeExploreScale();
+  renderCurveLegend();
+});
+gasSelect2.addEventListener("change", ()=>{
+  recomputeExploreScale();
+  renderCurveLegend();
+});
+tempSlider2.addEventListener("input", ()=>{
+  tempValue2.textContent = tempSlider2.value + " K";
+  renderCurveLegend();
+});
+
+window.addEventListener("resize", resizeCanvases);
+
+/* ================= GUIDED LAB MODE ================= */
+const labSteps = document.querySelectorAll(".lab-step-btn");
+const labPanels = document.querySelectorAll(".lab-step");
+labSteps.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    labSteps.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    labPanels.forEach(p=>p.style.display="none");
+    document.getElementById("lab-step-"+btn.dataset.step).style.display="block";
+  });
+});
+
+function drawSimpleCurve(canvas, series, maxV, maxDensity){
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  drawAxes(ctx,w,h,maxV,maxDensity);
+  series.forEach(s=>{
+    drawSeries(ctx,w,h,s.T,s.M,s.color,maxV,maxDensity,!!s.dashed);
+    drawMarkers(ctx,w,h,s.T,s.M,maxV,s.color);
+  });
+}
+
+// step 0: temperature (N2 only, 150-1000 K). Domain/height are fixed to the
+// slider's own extremes so raising T visibly shifts + flattens the curve.
+const labCanvas0 = document.getElementById("labCurveCanvas0");
+const labTempSlider = document.getElementById("labTempSlider");
+const labTempValue = document.getElementById("labTempValue");
+const LAB0_T_MIN = Number(labTempSlider.min), LAB0_T_MAX = Number(labTempSlider.max);
+const LAB0_MAX_V = vrms(LAB0_T_MAX, GASES.N2.M)*3.2;
+const LAB0_MAX_DENSITY = mbDensity(vmp(LAB0_T_MIN,GASES.N2.M),LAB0_T_MIN,GASES.N2.M)*1.15;
+function renderLab0(){
+  const T = Number(labTempSlider.value);
+  labTempValue.textContent = T + " K";
+  drawSimpleCurve(labCanvas0, [{T:T, M:GASES.N2.M, color:GASES.N2.color}], LAB0_MAX_V, LAB0_MAX_DENSITY);
+}
+labTempSlider.addEventListener("input", renderLab0);
+
+// step 1: molar mass at a fixed T=500K. Domain/height are sized to whichever
+// two gases are actually being compared (He + the dropdown pick), recomputed
+// each time the dropdown changes - so both curves stay clearly visible
+// instead of the axis being sized for hydrogen even when it's not shown.
+const labCanvas1 = document.getElementById("labCurveCanvas1");
+const labMassTag = document.getElementById("labMassTag");
+const LAB1_T = 500;
+function renderLab1(){
+  const g2 = GASES[labGasSelect.value];
+  labMassTag.textContent = "M = " + (g2.M*1000).toFixed(2) + " g/mol";
+  const maxV = Math.max(vrms(LAB1_T,GASES.He.M), vrms(LAB1_T,g2.M))*3.2;
+  const maxDensity = Math.max(
+    mbDensity(vmp(LAB1_T,GASES.He.M),LAB1_T,GASES.He.M),
+    mbDensity(vmp(LAB1_T,g2.M),LAB1_T,g2.M)
+  )*1.15;
+  drawSimpleCurve(labCanvas1, [
+    {T:LAB1_T, M:GASES.He.M, color:GASES.He.color},
+    {T:LAB1_T, M:g2.M, color:g2.color, dashed:true}
+  ], maxV, maxDensity);
+}
+labGasSelect.addEventListener("change", renderLab1);
+
+// step 2: pressure trap - static single curve, nothing to keep stable against
+const labCanvas2 = document.getElementById("labCurveCanvas2");
+const LAB2_MAX_V = vrms(400,GASES.O2.M)*3.2;
+const LAB2_MAX_DENSITY = mbDensity(vmp(400,GASES.O2.M),400,GASES.O2.M)*1.15;
+function renderLab2(){
+  drawSimpleCurve(labCanvas2, [{T:400, M:GASES.O2.M, color:GASES.O2.color}], LAB2_MAX_V, LAB2_MAX_DENSITY);
+}
+
+function resizeLabCanvases(){
+  [labCanvas0, labCanvas1, labCanvas2].forEach(c=>{
+    const w = c.clientWidth || c.parentElement.clientWidth;
+    c.width = Math.max(300, Math.round(w));
+    c.height = Math.round(c.width*0.30);
+  });
+  renderLab0(); renderLab1(); renderLab2();
+}
+
+/* guided lab check-blocks */
+document.querySelectorAll(".check-block").forEach(block=>{
+  const fb = block.querySelector(".feedback");
+  const opts = block.querySelectorAll(".opt");
+  opts.forEach(opt=>{
+    opt.addEventListener("click", ()=>{
+      if(block.dataset.answered) return;
+      block.dataset.answered = "1";
+      const correct = opt.dataset.correct === "true";
+      opts.forEach(o=>{
+        o.disabled = true;
+        if(o.dataset.correct === "true") o.classList.add("correct");
+        else if(o===opt) o.classList.add("incorrect");
+      });
+      fb.textContent = correct
+        ? "Correct \u2014 nice reasoning."
+        : "Not quite \u2014 the correct answer is highlighted above.";
+      fb.classList.add("show");
+    });
+  });
+});
+
+/* ================= QUIZ MODE ================= */
+const QUIZ = {
+  1:[
+    {q:"What does the kinetic molecular theory (KMT) describe?",
+     opts:["The arrangement of electrons in an atom","How motion of particles relates to the macroscopic properties of a gas","The bonding pattern in a molecule","The rate of a chemical reaction"],
+     correct:1,
+     exp:"KMT connects particle-level motion (speed, collisions) to macroscopic gas properties like pressure, volume, and temperature."},
+    {q:"A particle has a mass of 5.0\u00d710\u207b\u00b2\u2076 kg and a speed of 450 m/s. What is its kinetic energy?",
+     opts:["1.1\u00d710\u207b\u00b2\u00b9 J","5.1\u00d710\u207b\u00b2\u00b9 J","2.25\u00d710\u2075 J","1.0\u00d710\u207b\u00b2\u00b2 J"],
+     correct:1,
+     exp:"KE = \u00bdmv\u00b2 = 0.5 \u00d7 (5.0\u00d710\u207b\u00b2\u2076) \u00d7 450\u00b2 \u2248 5.1\u00d710\u207b\u00b2\u00b9 J."},
+    {q:"According to KMT, what is Kelvin temperature directly proportional to?",
+     opts:["Pressure of the gas","Average kinetic energy of the particles","Volume of the container","Molar mass of the gas"],
+     correct:1,
+     exp:"T (in Kelvin) is proportional to the average kinetic energy of the particles: KE\u0305 = \u00b3\u2044\u2082k_BT."},
+    {q:"On a Maxwell\u2013Boltzmann speed distribution, which speed marks the peak of the curve?",
+     opts:["v_rms","v_average","v_most probable","v_terminal"],
+     correct:2,
+     exp:"The peak of the curve occurs at the most probable speed, v_mp \u2014 the single speed shared by the largest fraction of particles."},
+    {q:"For any single gas sample, how do v_mp, v_avg, and v_rms compare?",
+     opts:["v_mp < v_avg < v_rms","v_rms < v_avg < v_mp","They are always equal","v_avg < v_mp < v_rms"],
+     correct:0,
+     exp:"Because v_rms weights faster particles more heavily, the order is always v_mp < v_avg < v_rms."}
+  ],
+  2:[
+    {q:"Two flasks hold He and Ar at the same temperature. Which statement is correct?",
+     opts:["He and Ar molecules have the same average speed","He and Ar molecules have the same average kinetic energy","Ar molecules have more kinetic energy because they are heavier","He molecules have less kinetic energy because they are lighter"],
+     correct:1,
+     exp:"At equal T, average KE is identical for every gas (KE\u0305 = \u00b3\u2044\u2082k_BT depends only on T) \u2014 but the lighter He moves faster on average to carry that same energy."},
+    {q:"If the Kelvin temperature of a gas doubles, what happens to the average particle speed?",
+     opts:["It doubles","It quadruples","It increases by a factor of \u221a2","It stays the same"],
+     correct:2,
+     exp:"Speed depends on \u221aT (v \u221d \u221aT), so doubling T increases speed by a factor of \u221a2, not 2\u00d7. (Average KE, however, does double.)"},
+    {q:"A sample of gas is cooled at constant volume. How does its Maxwell\u2013Boltzmann curve change?",
+     opts:["Shifts right and flattens","Shifts left and becomes taller/narrower","Stays exactly the same","Splits into two separate peaks"],
+     correct:1,
+     exp:"Cooling lowers average KE and speed, so the curve shifts toward lower speeds and becomes taller and narrower (less spread)."},
+    {q:"Which pair of gases, both at 300 K, would have the most similar Maxwell\u2013Boltzmann curves?",
+     opts:["H\u2082 and CO\u2082 (very different molar mass)","N\u2082 and O\u2082 (similar molar mass)","He and SF\u2086 (very different molar mass)","Ne and H\u2082 (very different molar mass)"],
+     correct:1,
+     exp:"At the same T, curve shape depends on molar mass \u2014 N\u2082 (28.0 g/mol) and O\u2082 (32.0 g/mol) are close enough that their curves nearly overlap."},
+    {q:"A student says, \u201cHeavier gas molecules move slower because gravity pulls harder on them.\u201d What's the correct KMT-based critique?",
+     opts:["That is correct as stated","Heavier molecules move slower because, at a given T, all gases share the same average KE, so more mass means less speed is needed \u2014 not because of gravity","Heavier molecules actually move faster, not slower","Gravity is the dominant force in KMT and the student is right for the wrong reason"],
+     correct:1,
+     exp:"KMT treats intermolecular/gravitational forces as negligible. The real reason heavier molecules are slower on average is that KE\u0305 = \u00bdmv\u00afd\u00b2 is fixed by T alone, so a larger m requires a smaller average v\u00b2."}
+  ],
+  3:[
+    {q:"A rigid, sealed container of Ne gas at 350 K has its temperature raised to 700 K. Which is true?",
+     opts:["Average KE doubles; average speed doubles","Average KE doubles; average speed increases by \u221a2","Average KE increases by \u221a2; average speed doubles","Neither KE nor speed changes without a volume change"],
+     correct:1,
+     exp:"KE\u0305 \u221d T, so doubling T doubles average KE. But since KE \u221d v\u00b2, speed only scales with \u221aT, so speed increases by a factor of \u221a2 (\u2248 1.41\u00d7)."},
+    {q:"Gas X has a Maxwell\u2013Boltzmann curve that is shorter, wider, and shifted right compared to Gas Y at the same temperature. What can you conclude?",
+     opts:["Gas X has a larger molar mass than Gas Y","Gas X has a smaller molar mass than Gas Y","Gas X is at a higher pressure than Gas Y","Gas X has stronger intermolecular forces than Gas Y"],
+     correct:1,
+     exp:"At equal T, a lighter gas (smaller M) needs higher speeds to match the same average KE, giving a curve that is shifted right and more spread out (shorter and wider)."},
+    {q:"Which change to a fixed sample of gas would NOT shift its Maxwell\u2013Boltzmann speed curve at all?",
+     opts:["Heating the gas at constant volume","Compressing the gas at constant temperature","Cooling the gas at constant pressure","Replacing the gas with a heavier one at the same temperature"],
+     correct:1,
+     exp:"The MB curve depends only on temperature and molar mass. Compressing at constant T changes pressure and collision frequency, but not the speed distribution itself."},
+    {q:"A mixture contains equal numbers of moles of N\u2082 and He at the same temperature. Which statement about their Maxwell\u2013Boltzmann curves is correct?",
+     opts:["They are identical, since T is the same for both","He's curve is centered at lower speeds than N\u2082's","He's curve is centered at higher speeds than N\u2082's, though both have the same average KE","N\u2082's curve has a higher peak at higher speed than He's"],
+     correct:2,
+     exp:"Because He (4.0 g/mol) is far lighter than N\u2082 (28.0 g/mol), its curve is shifted to noticeably higher speeds even though both gases share the same average KE at the same T."},
+    {q:"Why does the Maxwell\u2013Boltzmann curve rise from zero, peak, then fall with a long tail toward high speed, rather than being symmetric?",
+     opts:["Because pressure is not uniform in the container","Because the number of ways to have a given speed (from three velocity components) grows with v, while the exponential energy penalty grows faster at high v, together producing an asymmetric peaked curve","Because slower particles are more likely to escape detection","Because the curve is only a mathematical approximation with no physical basis"],
+     correct:1,
+     exp:"The v\u00b2 factor (from the 3D 'shell' of velocity directions with a given speed) increases the density at low-to-moderate v, while the exponential term suppresses high v; their product produces the characteristic rise-then-long-tail asymmetric shape."}
+  ]
+};
+
+let currentTier = 1;
+let qIndex = 0;
+let qScore = 0;
+let qAnswered = false;
+
+const quizArea = document.getElementById("quizArea");
+const tierButtons = document.querySelectorAll(".tier-select button");
+
+tierButtons.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    tierButtons.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    currentTier = Number(btn.dataset.tier);
+    qIndex = 0; qScore = 0; qAnswered=false;
+    renderQuestion();
+  });
+});
+
+function renderQuestion(){
+  const set = QUIZ[currentTier];
+  if(qIndex >= set.length){
+    renderResults(set.length);
+    return;
+  }
+  const item = set[qIndex];
+  qAnswered = false;
+  quizArea.innerHTML =
+    '<div class="q-progress">Question ' + (qIndex+1) + ' of ' + set.length + ' &middot; Tier ' + currentTier + '</div>' +
+    '<div class="check-block"><div class="q">' + item.q + '</div>' +
+    item.opts.map((o,i)=>'<button class="opt" data-i="'+i+'">'+o+'</button>').join('') +
+    '<div class="feedback"></div></div>';
+  const opts = quizArea.querySelectorAll(".opt");
+  const fb = quizArea.querySelector(".feedback");
+  opts.forEach(opt=>{
+    opt.addEventListener("click", ()=>{
+      if(qAnswered) return;
+      qAnswered = true;
+      const chosen = Number(opt.dataset.i);
+      const isCorrect = chosen === item.correct;
+      if(isCorrect) qScore++;
+      opts.forEach(o=>{
+        o.disabled = true;
+        if(Number(o.dataset.i)===item.correct) o.classList.add("correct");
+        else if(o===opt) o.classList.add("incorrect");
+      });
+      fb.textContent = item.exp;
+      fb.classList.add("show");
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "action primary";
+      nextBtn.style.marginTop = "12px";
+      nextBtn.textContent = (qIndex < set.length-1) ? "Next question" : "See results";
+      nextBtn.addEventListener("click", ()=>{ qIndex++; renderQuestion(); });
+      quizArea.querySelector(".check-block").appendChild(nextBtn);
+    });
+  });
+}
+
+function renderResults(total){
+  const pct = Math.round((qScore/total)*100);
+  let cls = "review", label = "Needs Review";
+  if(pct >= 90){ cls="mastery"; label="Mastery"; }
+  else if(pct >= 70){ cls="proficient"; label="Proficient"; }
+  quizArea.innerHTML =
+    '<div class="results">' +
+    '<div class="badge '+cls+'">'+label+'</div>' +
+    '<p style="color:var(--text-dim);">You scored ' + qScore + ' / ' + total + ' (' + pct + '%) on Tier ' + currentTier + '.</p>' +
+    '<button class="action primary" id="retryBtn">Retry this tier</button>' +
+    '</div>';
+  document.getElementById("retryBtn").addEventListener("click", ()=>{
+    qIndex=0; qScore=0; renderQuestion();
+  });
+}
+
+/* ================= MODE SWITCHING ================= */
+const modeButtons = document.querySelectorAll(".mode-btn");
+modeButtons.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    modeButtons.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".mode-panel").forEach(p=>p.style.display="none");
+    document.getElementById("mode-"+btn.dataset.mode).style.display="block";
+    if(btn.dataset.mode==="lab") resizeLabCanvases();
+  });
+});
+
+/* ================= INIT ================= */
+updateStats();
+resizeCanvases();
+renderCurveLegend();
+renderQuestion();
+requestAnimationFrame(explorLoop);
+
+})();
+</script>
 </body>
 </html>
